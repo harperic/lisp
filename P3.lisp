@@ -3,13 +3,19 @@
 ;; define the number whose largest prime factor we need to find
 (defvar *goal* 600851475143)
 
+;; this is a found function that of course returns if prime
 (defun primep (num)
   ;; test if n is prime. if composite, the second returned
   ;; value is the lowest factor
   (when (> num 1)
+    ;; check up to the sqrt of the num
     (loop for i from 2 to (sqrt num)
+          ;; this is the non-prime check
           when (= 0 (mod num i))
+            ;; will return nil because it's not prime
+            ;; will then return the lowest factor
             return (values nil i)
+          ;; if it hasn't already exited, returns true
           finally (return t))))
 
 ;; found solution
@@ -33,6 +39,8 @@
     ;; now let's loop; instead of going up, we go down
     ;; so that the first value we run into we know is correct
     (loop for i from upper_bound downto 1
-          when (and (primep i)
-                    (zerop (mod *goal* i)))
+          ;; altered the order-of-ops so that prime evaluation
+          ;; IFF factor divides. Greatly increases speed
+          when (and (zerop (mod *goal* i))
+                    (primep i))
             return i)))
